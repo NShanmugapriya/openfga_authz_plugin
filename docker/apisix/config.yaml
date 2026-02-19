@@ -1,0 +1,105 @@
+apisix:
+  node_listen: 9080
+  enable_ipv6: false
+  
+  enable_control: true
+  control:
+    ip: "0.0.0.0"
+    port: 9092
+
+deployment:
+  role: traditional
+  role_traditional:
+    config_provider: etcd
+  
+  admin:
+    admin_key:
+      - name: "admin"
+        key: edd1c9f034335f136f87ad84b625c8f1
+        role: admin
+    enable_admin_cors: true
+    allow_admin:
+      - 0.0.0.0/0
+  
+  etcd:
+    host:
+      - "http://etcd:2379"
+    prefix: "/apisix"
+    timeout: 30
+
+nginx_config:
+  error_log_level: "info"
+  
+plugins:
+  - public-api
+  - request-id
+  - zipkin
+  - ext-plugin-pre-req
+  - fault-injection
+  - mocking
+  - serverless-pre-function
+  - cors
+  - ip-restriction
+  - ua-restriction
+  - referer-restriction
+  - csrf
+  - uri-blocker
+  - request-validation
+  - chaitin-waf
+  - multi-auth
+  - openid-connect
+  - cas-auth
+  - authz-casbin
+  - authz-casdoor
+  - wolf-rbac
+  - ldap-auth
+  - hmac-auth
+  - basic-auth
+  - jwt-auth
+  - key-auth
+  - consumer-restriction
+  - forward-auth
+  - opa
+  - authz-keycloak
+  - openfga-authz
+  - proxy-cache
+  - body-transformer
+  - proxy-mirror
+  - proxy-rewrite
+  - workflow
+  - api-breaker
+  - limit-conn
+  - limit-count
+  - limit-req
+  - gzip
+  - server-info
+  - traffic-split
+  - redirect
+  - response-rewrite
+  - degraphql
+  - kafka-proxy
+  - grpc-transcode
+  - grpc-web
+  - http-logger
+  - splunk-hec-logging
+  - skywalking-logger
+  - google-cloud-logging
+  - sls-logger
+  - tcp-logger
+  - kafka-logger
+  - rocketmq-logger
+  - syslog
+  - udp-logger
+  - file-logger
+  - clickhouse-logger
+  - tencent-cloud-cls
+  - loggly
+  - elasticsearch-logger
+  - opentelemetry
+  - prometheus
+  - datadog
+  - loki-logger
+  - openfunction
+  - serverless-post-function
+  - ext-plugin-post-req
+  - ext-plugin-post-resp
