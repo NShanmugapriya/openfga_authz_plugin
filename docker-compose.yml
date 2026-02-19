@@ -1,0 +1,61 @@
+version: "3.8"
+
+services:
+  # OpenFGA Server
+  openfga:
+    image: openfga/openfga:latest
+    container_name: openfga
+    command: run
+    environment:
+      - OPENFGA_DATASTORE_ENGINE=memory
+      - OPENFGA_LOG_LEVEL=info
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+      - "3000:3000"
+    networks:
+      - apisix-openfga
+
+  # Apache APISIX
+  apisix:
+    image: apache/apisix:3.7.0-debian
+    container_name: apisix
+    restart: always
+    volumes:
+      - ./apisix/plugins:/usr/local/apisix/apisix/plugins:ro
+      - ./docker/apisix/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+      - ./docker/apisix/apisix.yaml:/usr/local/apisix/conf/apisix.yaml:ro
+    depends_on:
+      - openfga
+      - etcd
+    ports:
+      - "9080:9080"
+      - "9180:9180"
+      - "9443:9443"
+    networks:
+      - apisix-openfga
+
+  # etcd for APISIX
+  etcd:
+    image: bitnami/etcd:3.5
+    container_name: etcd
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_ADVERTISE_CLIENT_URLS=http://0.0.0.0:2379
+    ports:
+      - "2379:2379"
+    networks:
+      - apisix-openfga
+
+  # Sample upstream service (httpbin for testing)
+  httpbin:
+    image: kennethreitz/httpbin
+    container_name: httpbin
+    ports:
+      - "8000:80"
+    networks:
+      - apisix-openfga
+
+networks:
+  apisix-openfga:
+    driver: bridge

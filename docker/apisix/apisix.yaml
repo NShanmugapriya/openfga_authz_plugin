@@ -1,0 +1,23 @@
+routes:
+  - uri: /api/documents/*
+    name: "Example Document Route"
+    plugins:
+      openfga-authz:
+        openfga_url: "http://openfga:8080"
+        store_id: "01HXXXXXXXXXXXXXXXXXXX"
+        resource_type: "document"
+        user_header: "X-User-ID"
+        relation_mapping:
+          GET: "viewer"
+          POST: "editor"
+          PUT: "editor"
+          DELETE: "owner"
+        id_location: "last_path_segment"
+        cache_ttl: 300
+        ssl_verify: false
+    upstream:
+      type: roundrobin
+      nodes:
+        "httpbin:80": 1
+
+#END

@@ -1,0 +1,78 @@
+name: Lint and Validate
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lua-lint:
+    runs-on: ubuntu-latest
+    name: Lint Lua Code
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install Lua
+        uses: leafo/gh-actions-lua@v10
+        with:
+          luaVersion: "5.1"
+      
+      - name: Install LuaRocks
+        uses: leafo/gh-actions-luarocks@v4
+      
+      - name: Install luacheck
+        run: luarocks install luacheck
+      
+      - name: Run luacheck
+        run: |
+          luacheck apisix/plugins/*.lua \
+            --globals ngx \
+            --max-line-length 120 \
+            --no-unused-args \
+            --ignore 212 \
+            || echo "Luacheck warnings found (non-blocking)"
+
+  markdown-lint:
+    runs-on: ubuntu-latest
+    name: Lint Markdown
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Lint Markdown files
+        uses: avto-dev/markdown-lint@v1
+        with:
+          args: '**/*.md'
+          config: '.markdownlint.json'
+          ignore: 'node_modules'
+        continue-on-error: true
+
+  validate-docker:
+    runs-on: ubuntu-latest
+    name: Validate Docker Compose
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Validate docker-compose.yml
+        run: docker-compose config
+
+  check-links:
+    runs-on: ubuntu-latest
+    name: Check Documentation Links
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check links in documentation
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'yes'
+          config-file: '.markdown-link-check.json'
+        continue-on-error: true
