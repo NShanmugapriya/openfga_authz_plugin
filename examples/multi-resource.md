@@ -352,4 +352,4 @@ This example demonstrates:
 
 - Explore [Custom Relation Mapping](custom-relations.md)
 - Read the [Configuration Guide](../docs/configuration.md)
-- Learn about [Performance Tuning](../docs/performance.md)
+- Review [Architecture Documentation](../docs/architecture.md) for performance considerations

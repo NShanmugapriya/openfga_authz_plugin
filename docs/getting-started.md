@@ -260,10 +260,10 @@ Use the APISIX Admin API or configuration files to set up routes with the plugin
 
 ## Next Steps
 
-- Read the [Configuration Guide](docs/configuration.md) for detailed configuration options
-- Explore [Examples](examples/) for different use cases
-- Learn about [Performance Tuning](docs/configuration.md#performance-considerations)
-- Check the [README](README.md) for more information
+- Read the [Configuration Guide](configuration.md) for detailed configuration options
+- Explore [Examples](../examples/) for different use cases
+- Learn about [Performance Tuning](configuration.md#performance-considerations)
+- Check the [README](../README.md) for more information
 
 ## Troubleshooting
 
