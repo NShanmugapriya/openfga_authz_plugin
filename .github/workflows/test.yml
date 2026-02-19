@@ -1,0 +1,42 @@
+name: Integration Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    name: Test with Docker Compose
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Start services
+        run: docker-compose up -d
+      
+      - name: Wait for services to be ready
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:8080/healthz; do sleep 2; done'
+          timeout 60 bash -c 'until curl -f http://localhost:9080; do sleep 2; done'
+      
+      - name: Check OpenFGA health
+        run: curl -f http://localhost:8080/healthz
+      
+      - name: Check APISIX health
+        run: curl -f http://localhost:9080
+      
+      - name: Show APISIX logs
+        if: always()
+        run: docker logs apisix
+      
+      - name: Show OpenFGA logs
+        if: always()
+        run: docker logs openfga
+      
+      - name: Stop services
+        if: always()
+        run: docker-compose down -v
